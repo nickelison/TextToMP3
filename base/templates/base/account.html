@@ -1,0 +1,43 @@
+{% extends 'main.html' %}
+
+{% block content %}
+  <div class="row">
+    <div class="col-md-12 mx-auto">
+      <div class="card text-center">
+        <img class="card-img-top rounded-circle profile-avatar mx-auto mt-4" src="{{ user.get_profile_picture_url }}" alt="Profile Picture">        
+        
+        <div class="card-body">
+          <h5 class="card-title">{{ user.email }}</h5>
+          <p class="card-text"><a href="{% url 'files' %}">{{ mp3_count }} MP3 {% if mp3_count == 1 %}file{% else %}files{% endif %}</a></p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="col-md-8">
+      <div class="account-settings-section">
+        <!-- Profile Picture Form -->
+        <section class="mt-3">
+          <h3>Change Profile Picture</h3>
+          <form class="container mx-auto p-0" action="{% url 'uploadProfilePicture' %}" method="POST" role="form" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <div>
+              <button class="mt-2 btn btn-secondary" type="submit">Save</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="mt-3">
+          <h3>Account Actions</h3>
+          <ul>
+            <li><a href="{% url 'changePassword' %}">Change password</a></li>
+            <li><a href="#" onclick="showCdaModal()">Delete account</a></li>
+            <li><a href="{% url 'logout' %}">Log out</a></li>
+          </ul>
+        </section>
+        
+    
+      </div>
+    </div>
+  </div>
+{% endblock content %}

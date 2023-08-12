@@ -1,0 +1,11 @@
+venv/
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+pgdata/*
+.env
+migrations/*
+readme-private.md
+.env.mk

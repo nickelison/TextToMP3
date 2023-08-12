@@ -1,0 +1,62 @@
+version: '3.1'
+
+services:
+  app:
+    container_name: texttomp3-django
+    depends_on:
+        - db
+    build:
+      context: .
+      dockerfile: $PWD/Dockerfile
+      args:
+        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+        - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+        - DEV_POSTGRES_USER=${DEV_POSTGRES_USER}
+        - DEV_POSTGRES_PASS=${DEV_POSTGRES_PASS}
+        - DEV_POSTGRES_HOST=${DEV_POSTGRES_HOST}
+        - DEV_POSTGRES_DB=${DEV_POSTGRES_DB}
+        - DJANGO_SECRET=${DJANGO_SECRET}
+        - DJANGO_DEBUG=${DJANGO_DEBUG}
+    ports:
+      - 8001:8000
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+    volumes:
+      - ./migrations:/app/migrations
+      - ./.env:/.env
+      - static_volume:/app/static/  # Static files volume
+      - media_volume:/app/media/  # Media files volume
+  nginx:
+    image: nginx:1.23
+    ports:
+      - 8002:80
+    volumes:
+      - static_volume:/app/static/
+      - media_volume:/app/media/
+      - ./config/nginx:/etc/nginx/conf.d
+    depends_on:
+      - app
+  db:
+    container_name: db
+    environment:
+      - POSTGRES_USER=${DEV_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${DEV_POSTGRES_PASS}
+      - POSTGRES_DB=${DEV_POSTGRES_DB}
+    image: postgres:14
+    networks:
+      - default
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+      - .:/dumps
+
+
+volumes:
+  pgdata: {}
+  static_volume:  # Static files volume
+  media_volume:  # Media files volume

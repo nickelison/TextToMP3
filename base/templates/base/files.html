@@ -1,0 +1,54 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row" id="home">
+  <div class="col-md-12 mx-auto">
+    <div class="px-4 pt-1 my-4 text-center">
+      <h1 class="display-4 fw-bold">Your MP3 Files</h1>
+    </div>
+      
+    {% if mp3_files %}
+    <table class="table table-striped table-hover" id="file-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Play</th>
+          <th>File Name</th>
+          <th>Created</th>
+          <th>View Text</th>
+          <th>Download</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for mp3 in mp3_files %}
+        <tr id="row-{{ forloop.counter }}">
+          <td>{{ forloop.counter }}</td>
+          <td>
+            <audio id="file-{{ forloop.counter }}" src="{{ mp3.get_mp3_url }}" preload="auto"></audio>
+            <button onclick="document.getElementById('file-{{ forloop.counter }}').play();" class="btn btn-primary">Play</button>
+          </td>
+          <td>{{ mp3.custom_file_name }}</td>
+          <td>{{ mp3.created|date:'Y-m-d' }}</td>
+          <td><button class="btn btn-info" onclick="viewFileText({{ mp3.id }})">Text</button></td>
+          <td><a href="{{ mp3.get_mp3_url }}" class="btn btn-secondary">Download</a></td>
+          <td>
+            <form action="{% url 'deleteFile' mp3.id %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="mp3_id" value="{{ mp3.id }}">
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p>No MP3 files found.</p>
+    {% endif %}
+  </div>
+</div>
+
+  <script src="{% static 'js/uploads.js' %}"></script>
+{% endblock content %}

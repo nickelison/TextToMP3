@@ -1,0 +1,42 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row" id="home">
+    <div class="col-md-8 mx-auto">
+      <form class="container mx-auto pt-2 pb-3 ps-0 pe-0" action="" method="POST" role="form">
+        {% csrf_token %}
+      
+        <fieldset class="form-group">
+          <legend class="border-bottom mb-3">Create New MP3 File</legend>
+          
+          {% for field in form %}
+          <div class="{% if field.name == 'use_neural_engine' %}form-check mt-2{% else %}form-group{% endif %}">
+            {% if field.name == 'use_neural_engine' %}
+            <label for="{{ field.id_for_label }}" class="form-check-label">{{ field.label }}</label>
+            {{ field }}            
+            {% else %}
+              <label for="{{ field.name }}" class="form-control-label mt-2 required">{{ field.label }}</label>
+              {{ field }}
+              {% if field.name == 'text' %}
+              <span id="character-count" class="mt-1"></span>
+              {% endif %}
+            {% endif %}
+            {% if field.errors %}
+              <div class="text-danger">
+                {{ field.errors.0 }}
+              </div>
+            {% endif %}
+          </div>
+          {% endfor %}
+        
+          <div class="d-flex align-items-center mt-3">
+            <input class="btn btn-primary flex-grow-1 p-2" id="submit" name="submit" type="submit" value="Create MP3 File">
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="{% static 'js/upload.js' %}"></script>
+{% endblock content %}
